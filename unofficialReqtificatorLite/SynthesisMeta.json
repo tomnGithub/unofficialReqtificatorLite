@@ -4,12 +4,9 @@
     "OneLineDescription": "Reqtify NPCs in Synthesis",
     "LongDescription": "Patcher that mimics some of the functions of the Reqtificator, allows you to patch selected ESPs.",
     "PreferredAutoVersioning": "Default",
-    "RequiredMods": [
-        "Skyrim.esm"
-    ],
+    "RequiredMods": [],
     "TargetedReleases": [
         "SkyrimSE",
-        "SkyrimAE",
         "SkyrimVR",
         "SkyrimSEGog"
     ]
