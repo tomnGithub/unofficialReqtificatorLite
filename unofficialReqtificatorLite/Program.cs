@@ -319,9 +319,10 @@ public class Program
             }
             if (formSettings.Value.ArrowsOn)
             {
-            uint npcFromSelectedMod = 0;
+           
             foreach (var ammoo in state.LoadOrder.PriorityOrder.Ammunition().WinningOverrides())
                 {
+                 uint npcFromSelectedMod = 0;
                     ModKey modKey = ammoo.FormKey.ModKey.FileName;
                     if (formSettings.Value.ReqOn)
                     {
