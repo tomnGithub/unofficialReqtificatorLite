@@ -160,7 +160,7 @@ public class Program
             {
                     foreach (var npc in state.LoadOrder.PriorityOrder.Npc().WinningOverrides())
                     {
-
+               
 
                         ModKey modKey = npc.FormKey.ModKey.FileName;
                 bool hasBeenPatched = false;
@@ -416,8 +416,9 @@ public class Program
             foreach (var ammoo in state.LoadOrder.PriorityOrder.Ammunition().WinningOverrides())
                 {
                  uint npcFromSelectedMod = 0;
-
+                
                     ModKey modKey = ammoo.FormKey.ModKey.FileName;
+                
                 bool hasBeenPatched = false;
                 
                 if ( masterList.Count > 150 && stopBeforeLimit == false)
@@ -487,9 +488,12 @@ public class Program
                             masterList.Add(modKey.ToString());
                         }
                         var moddifiedAmmo = state.PatchMod.Ammunitions.GetOrAddAsOverride(ammoo);
-                                moddifiedAmmo.Damage *= 4;
-                        moddifiedAmmo.Keywords ??= new();
-                        moddifiedAmmo.Keywords.Add(formKeyPatched);
+                        moddifiedAmmo.Damage *= 4;
+                        
+                            moddifiedAmmo.Keywords ??= new();
+                            moddifiedAmmo.Keywords.Add(formKeyPatched);
+                          
+                        
 
                             }
 
