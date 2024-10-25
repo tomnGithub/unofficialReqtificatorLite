@@ -91,8 +91,8 @@ public class Program
 
         
         FormKey formkeyActor = FormKey.Factory("000800:RFTI_Alternative_Keyword.esp");
-        FormKey formkeyWeap = FormKey.Factory("000801:RFTI_Alternative_Keyword.esp");
-        FormKey formkeyArmo = FormKey.Factory("000802:RFTI_Alternative_Keyword.esp");
+        FormKey formkeyArmo = FormKey.Factory("000801:RFTI_Alternative_Keyword.esp");
+        FormKey formkeyWeap = FormKey.Factory("000802:RFTI_Alternative_Keyword.esp");
         FormKey formKeyPatched = FormKey.Factory("000802:RFTI_Alternative_Keyword.esp");
 
 
