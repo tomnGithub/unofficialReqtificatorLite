@@ -74,9 +74,9 @@ public class Program
             .Select(x => (x.ModKey, x.Npcs))
             .Where(x => formSettings.Value.TargetMods.Contains(x.ModKey))
             .ToArray();
-        if (formSettings.Value.ReqOn)
+        if (formSettings.Value.ReqOn || formSettings.Value.txtOn)
         {
-            Console.WriteLine("Now patching mods not patched by Requiem for the Indifferent.esp");
+            Console.WriteLine("Patcher Mode: Automatic");
         }
         else
         {
@@ -92,14 +92,15 @@ public class Program
         
         FormKey formkeyActor = FormKey.Factory("000800:RFTI_Alternative_Keyword.esp");
         FormKey formkeyArmo = FormKey.Factory("000801:RFTI_Alternative_Keyword.esp");
-        FormKey formkeyWeap = FormKey.Factory("000802:RFTI_Alternative_Keyword.esp");
+        FormKey  formkeyWeap = FormKey.Factory("000802:RFTI_Alternative_Keyword.esp");
         FormKey formKeyPatched = FormKey.Factory("000802:RFTI_Alternative_Keyword.esp");
+   
 
 
         bool formKeyUptoDate = false;
         try
         {
-             formKeyPatched = FormKey.Factory("000803:RFTI_Alternative_Keyword.esp");
+             
             formKeyUptoDate = true;
 
         }
@@ -149,9 +150,60 @@ public class Program
 
         var mod = state.LoadOrder.TryGetValue("Requiem for the Indifferent.esp");
         //Console.WriteLine(mod);
-        var masters = mod?.Mod?.ModHeader.MasterReferences;
+       
         List<string> masterList = new List<string>();
-        bool stopBeforeLimit = false;
+        // Initialize the ignoreList with non-nullable string type to match RFTImasterList
+        List<string> ignoreList = new List<string>();
+
+        // Define the path to the file
+        string outputPath = $@"{state.DataFolderPath}\ReqLite_IgnoreThesePlugins.txt";
+
+        // Check if the file exists and read it into ignoreList, else create it
+        if (File.Exists(outputPath))
+        {
+            // Read all lines ensuring they are non-null strings
+            ignoreList = File.ReadAllLines(outputPath).Where(line => line != null).ToList();
+        }
+        else
+        {
+            // Initialize an empty file to avoid null issues later
+            WriteToIniFile(outputPath, "");
+        }
+
+        // Check if masters are null before accessing them
+        var masters = mod?.Mod?.ModHeader.MasterReferences;
+
+
+        // Initialize RFTImasterList as an empty list
+        var RFTImasterList = new List<string>();
+
+        // Use a for loop to add each master's ToString() result to RFTImasterList
+        if (masters != null)
+        {
+            for (int i = 0; i < masters.Count; i++)
+            {
+              
+                RFTImasterList.Add(masters[i]?.Master.FileName.ToString() ?? string.Empty);
+            }
+        }
+      
+
+        // If formSettings.Value.txtOn is true, assign ignoreList to RFTImasterList
+        if (formSettings.Value.txtOn)
+        {
+            RFTImasterList = ignoreList;
+        }
+
+        bool autoPatchEnabled = false;
+        if (formSettings.Value.ReqOn || formSettings.Value.txtOn)
+        {
+            autoPatchEnabled = true;
+        }
+
+
+
+
+            bool stopBeforeLimit = false;
         
 
     
@@ -165,7 +217,7 @@ public class Program
                         ModKey modKey = npc.FormKey.ModKey.FileName;
                 bool hasBeenPatched = false;
                 
-                if ( masterList.Count > 150 && stopBeforeLimit == false)
+                if ( masterList.Count > formSettings.Value.maxNumP && stopBeforeLimit == false)
                 {
                      stopBeforeLimit = true;
                     Console.WriteLine("Generated plugin will contain more than 250 masters.");
@@ -189,7 +241,7 @@ public class Program
                 }
 
                 uint npcFromSelectedMod = 0;
-                if (formSettings.Value.ReqOn)
+                if (autoPatchEnabled)
                     {
                     npcFromSelectedMod = 1;
                     if (modKey == "Requiem for the Indifferent.esp")
@@ -198,10 +250,12 @@ public class Program
                     }
                    
                     bool npcInRFTI = false;
-                    for (int i = 0; i < masters?.Count; i++)
+                    for (int i = 0; i < RFTImasterList?.Count; i++)
                         {
-                            if (modKey == masters?[i].Master.FileName)
+                       
+                            if (modKey == RFTImasterList[i])
                             {
+
                             
                             npcInRFTI = true;
                             }
@@ -254,7 +308,7 @@ public class Program
                 ModKey modKey = weap.FormKey.ModKey.FileName;
                 bool hasBeenPatched = false;
                
-                if ( masterList.Count > 150 && stopBeforeLimit == false)
+                if ( masterList.Count > formSettings.Value.maxNumP && stopBeforeLimit == false)
                 {
                     stopBeforeLimit = true;
                     Console.WriteLine("Generated plugin will contain more than 250 masters.");
@@ -276,7 +330,7 @@ public class Program
                 {
                     continue;
                 }
-                if (formSettings.Value.ReqOn)
+                if (autoPatchEnabled)
                     {
                     npcFromSelectedMod = 1;
                     if (modKey == "Requiem for the Indifferent.esp")
@@ -284,9 +338,9 @@ public class Program
                         continue;
                     }
                     bool npcInRFTI = false;
-                    for (int i = 0; i < masters?.Count; i++)
+                    for (int i = 0; i < RFTImasterList?.Count; i++)
                     {
-                        if (modKey == masters?[i].Master.FileName)
+                        if (modKey == RFTImasterList[i])
                             
                         {
                             npcInRFTI = true;
@@ -421,7 +475,7 @@ public class Program
                 
                 bool hasBeenPatched = false;
                 
-                if ( masterList.Count > 150 && stopBeforeLimit == false)
+                if ( masterList.Count > formSettings.Value.maxNumP && stopBeforeLimit == false)
                 {
                     stopBeforeLimit = true;
                     Console.WriteLine("Generated plugin will contain more than 250 masters.");
@@ -443,7 +497,7 @@ public class Program
                 {
                     continue;
                 }
-                if (formSettings.Value.ReqOn)
+                if (autoPatchEnabled)
                     {npcFromSelectedMod = 1;
 
                     if (modKey == "Requiem for the Indifferent.esp")
@@ -451,9 +505,9 @@ public class Program
                         continue;
                     }
                     bool npcInRFTI = false;
-                    for (int i = 0; i < masters?.Count; i++)
+                    for (int i = 0; i < RFTImasterList?.Count; i++)
                     {
-                        if (modKey == masters?[i].Master.FileName)
+                        if (modKey == RFTImasterList[i])
 
                         {
                             npcInRFTI = true;
@@ -514,7 +568,7 @@ public class Program
                 ModKey modKey = armo.FormKey.ModKey.FileName;
                 bool hasBeenPatched = false;
                
-                if ( masterList.Count > 150 && stopBeforeLimit == false)
+                if ( masterList.Count > formSettings.Value.maxNumP && stopBeforeLimit == false)
                 {
                     stopBeforeLimit = true;
                     Console.WriteLine("Generated plugin will contain more than 250 masters.");
@@ -538,16 +592,16 @@ public class Program
                 }
 
 
-                if (formSettings.Value.ReqOn)
+                if (autoPatchEnabled)
                     {npcFromSelectedMod = 1;
                     if (modKey == "Requiem for the Indifferent.esp")
                     {
                         continue;
                     }
                     bool npcInRFTI = false;
-                    for (int i = 0; i < masters?.Count; i++)
+                    for (int i = 0; i < RFTImasterList?.Count; i++)
                     {
-                        if (modKey == masters?[i].Master.FileName)
+                        if (modKey == RFTImasterList[i])
 
                         {
                             npcInRFTI = true;
@@ -623,7 +677,7 @@ public class Program
                 {
                 uint npcFromSelectedMod = 0;
                 ModKey modKey = doorr.FormKey.ModKey.FileName;
-                if (masterList.Count > 150 && stopBeforeLimit == false)
+                if (masterList.Count > formSettings.Value.maxNumP && stopBeforeLimit == false)
                 {
                     stopBeforeLimit = true;
                     Console.WriteLine("Generated plugin will contain more than 250 masters.");
@@ -640,16 +694,16 @@ public class Program
                 {
                     continue;
                 }
-                if (formSettings.Value.ReqOn)
+                if (autoPatchEnabled)
                     {npcFromSelectedMod = 1;
                     if (modKey == "Requiem for the Indifferent.esp")
                     {
                         continue;
                     }
                     bool npcInRFTI = false;
-                    for (int i = 0; i < masters?.Count; i++)
+                    for (int i = 0; i < RFTImasterList?.Count; i++)
                     {
-                        if (modKey == masters?[i].Master.FileName)
+                        if (modKey == RFTImasterList[i])
 
                         {
                             npcInRFTI = true;
@@ -700,7 +754,7 @@ public class Program
                 {
                 uint npcFromSelectedMod = 0;
                 ModKey modKey = contt.FormKey.ModKey.FileName;
-                if (masterList.Count > 150 && stopBeforeLimit == false)
+                if (masterList.Count > formSettings.Value.maxNumP && stopBeforeLimit == false)
                 {
                     stopBeforeLimit = true;
                     Console.WriteLine("Generated plugin will contain more than 250 masters.");
@@ -717,16 +771,16 @@ public class Program
                 {
                     continue;
                 }
-                if (formSettings.Value.ReqOn)
+                if (autoPatchEnabled)
                     {npcFromSelectedMod = 1;
                     if (modKey == "Requiem for the Indifferent.esp")
                     {
                         continue;
                     }
                     bool npcInRFTI = false;
-                    for (int i = 0; i < masters?.Count; i++)
+                    for (int i = 0; i < RFTImasterList?.Count; i++)
                     {
-                        if (modKey == masters?[i].Master.FileName)
+                        if (modKey == RFTImasterList[i])
 
                         {
                             npcInRFTI = true;
