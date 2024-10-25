@@ -269,7 +269,7 @@ public class Program
 
                         var modifiedWeap = state.PatchMod.Weapons.GetOrAddAsOverride(weap);
                         modifiedWeap.Keywords ??= new();
-                        modifiedWeap.Keywords.Add(formkeyActor);
+                        modifiedWeap.Keywords.Add(formkeyWeap);
                         try
                         {
                             modifiedWeap.BasicStats!.Damage = (ushort)(modifiedWeap.BasicStats!.Damage * factor!);
@@ -445,7 +445,7 @@ public class Program
                                     var modifiedArmo = state.PatchMod.Armors.GetOrAddAsOverride(armo);
 
                                     modifiedArmo.Keywords ??= new();
-                                    modifiedArmo.Keywords.Add(formkeyWeap);
+                                    modifiedArmo.Keywords.Add(formkeyArmo);
                                     modifiedArmo.ArmorRating = modifiedArmo.ArmorRating * factor + offset;
                                 }
 
