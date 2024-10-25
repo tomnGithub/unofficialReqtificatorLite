@@ -165,7 +165,7 @@ public class Program
                         ModKey modKey = npc.FormKey.ModKey.FileName;
                 bool hasBeenPatched = false;
                 
-                if ( masterList.Count > 250 && stopBeforeLimit == false)
+                if ( masterList.Count > 150 && stopBeforeLimit == false)
                 {
                      stopBeforeLimit = true;
                     Console.WriteLine("Generated plugin will contain more than 250 masters.");
@@ -254,7 +254,7 @@ public class Program
                 ModKey modKey = weap.FormKey.ModKey.FileName;
                 bool hasBeenPatched = false;
                
-                if ( masterList.Count > 250 && stopBeforeLimit == false)
+                if ( masterList.Count > 150 && stopBeforeLimit == false)
                 {
                     stopBeforeLimit = true;
                     Console.WriteLine("Generated plugin will contain more than 250 masters.");
@@ -420,7 +420,7 @@ public class Program
                     ModKey modKey = ammoo.FormKey.ModKey.FileName;
                 bool hasBeenPatched = false;
                 
-                if ( masterList.Count > 250 && stopBeforeLimit == false)
+                if ( masterList.Count > 150 && stopBeforeLimit == false)
                 {
                     stopBeforeLimit = true;
                     Console.WriteLine("Generated plugin will contain more than 250 masters.");
@@ -510,7 +510,7 @@ public class Program
                 ModKey modKey = armo.FormKey.ModKey.FileName;
                 bool hasBeenPatched = false;
                
-                if ( masterList.Count > 250 && stopBeforeLimit == false)
+                if ( masterList.Count > 150 && stopBeforeLimit == false)
                 {
                     stopBeforeLimit = true;
                     Console.WriteLine("Generated plugin will contain more than 250 masters.");
@@ -619,7 +619,7 @@ public class Program
                 {
                 uint npcFromSelectedMod = 0;
                 ModKey modKey = doorr.FormKey.ModKey.FileName;
-                if (masterList.Count > 250 && stopBeforeLimit == false)
+                if (masterList.Count > 150 && stopBeforeLimit == false)
                 {
                     stopBeforeLimit = true;
                     Console.WriteLine("Generated plugin will contain more than 250 masters.");
@@ -696,7 +696,7 @@ public class Program
                 {
                 uint npcFromSelectedMod = 0;
                 ModKey modKey = contt.FormKey.ModKey.FileName;
-                if (masterList.Count > 250 && stopBeforeLimit == false)
+                if (masterList.Count > 150 && stopBeforeLimit == false)
                 {
                     stopBeforeLimit = true;
                     Console.WriteLine("Generated plugin will contain more than 250 masters.");
