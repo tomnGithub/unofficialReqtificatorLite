@@ -164,10 +164,7 @@ public class Program
 
                         ModKey modKey = npc.FormKey.ModKey.FileName;
                 bool hasBeenPatched = false;
-                if (!masterList.Contains(modKey.ToString()))
-                {
-                    masterList.Add(modKey.ToString());
-                }
+                
                 if ( masterList.Count > 250 && stopBeforeLimit == false)
                 {
                      stopBeforeLimit = true;
@@ -234,6 +231,10 @@ public class Program
                 {
                     continue;
                 }
+                if (!masterList.Contains(modKey.ToString()))
+                {
+                    masterList.Add(modKey.ToString());
+                }
                 var modifiedNpc = state.PatchMod.Npcs.GetOrAddAsOverride(npc);
                     modifiedNpc.Keywords ??= new();
                     modifiedNpc.Keywords.Add(formkeyActor);
@@ -250,10 +251,7 @@ public class Program
                 uint npcFromSelectedMod = 0;
                 ModKey modKey = weap.FormKey.ModKey.FileName;
                 bool hasBeenPatched = false;
-                if (!masterList.Contains(modKey.ToString()))
-                {
-                    masterList.Add(modKey.ToString());
-                }
+               
                 if ( masterList.Count > 250 && stopBeforeLimit == false)
                 {
                     stopBeforeLimit = true;
@@ -353,7 +351,11 @@ public class Program
                             _ => null
                         };
 
-                        var modifiedWeap = state.PatchMod.Weapons.GetOrAddAsOverride(weap);
+                if (!masterList.Contains(modKey.ToString()))
+                {
+                    masterList.Add(modKey.ToString());
+                }
+                var modifiedWeap = state.PatchMod.Weapons.GetOrAddAsOverride(weap);
                         modifiedWeap.Keywords ??= new();
                         modifiedWeap.Keywords.Add(formkeyWeap);
                         modifiedWeap.Keywords.Add(formKeyPatched);
@@ -413,10 +415,7 @@ public class Program
 
                     ModKey modKey = ammoo.FormKey.ModKey.FileName;
                 bool hasBeenPatched = false;
-                if (!masterList.Contains(modKey.ToString()))
-                {
-                    masterList.Add(modKey.ToString());
-                }
+                
                 if ( masterList.Count > 250 && stopBeforeLimit == false)
                 {
                     stopBeforeLimit = true;
@@ -479,7 +478,11 @@ public class Program
                         {
                             if (ammoo.Damage > 0)
                             {
-                                var moddifiedAmmo = state.PatchMod.Ammunitions.GetOrAddAsOverride(ammoo);
+                        if (!masterList.Contains(modKey.ToString()))
+                        {
+                            masterList.Add(modKey.ToString());
+                        }
+                        var moddifiedAmmo = state.PatchMod.Ammunitions.GetOrAddAsOverride(ammoo);
                                 moddifiedAmmo.Damage *= 4;
                         moddifiedAmmo.Keywords ??= new();
                         moddifiedAmmo.Keywords.Add(formKeyPatched);
@@ -502,10 +505,7 @@ public class Program
                 uint npcFromSelectedMod = 0;
                 ModKey modKey = armo.FormKey.ModKey.FileName;
                 bool hasBeenPatched = false;
-                if (!masterList.Contains(modKey.ToString()))
-                {
-                    masterList.Add(modKey.ToString());
-                }
+               
                 if ( masterList.Count > 250 && stopBeforeLimit == false)
                 {
                     stopBeforeLimit = true;
@@ -586,7 +586,11 @@ public class Program
                             {
                                 if (slot.ToString()!.Contains("Body") || slot.ToString()!.Contains("Head") || slot.ToString()!.Contains("Feet") || slot.ToString()!.Contains("Hands"))
                                 {
-                                    var modifiedArmo = state.PatchMod.Armors.GetOrAddAsOverride(armo);
+                            if (!masterList.Contains(modKey.ToString()))
+                            {
+                                masterList.Add(modKey.ToString());
+                            }
+                            var modifiedArmo = state.PatchMod.Armors.GetOrAddAsOverride(armo);
 
                                     modifiedArmo.Keywords ??= new();
                                     modifiedArmo.Keywords.Add(formkeyArmo);
@@ -611,7 +615,24 @@ public class Program
                 {
                 uint npcFromSelectedMod = 0;
                 ModKey modKey = doorr.FormKey.ModKey.FileName;
-                    if (formSettings.Value.ReqOn)
+                if (masterList.Count > 250 && stopBeforeLimit == false)
+                {
+                    stopBeforeLimit = true;
+                    Console.WriteLine("Generated plugin will contain more than 250 masters.");
+                    Console.WriteLine("The Reqtificator Lite will now stop patching and will save the esp.");
+                    Console.WriteLine("To continue patching, copy this message somewhere you can read it and follow the steps below:");
+                    Console.WriteLine("1. Close Synthesis");
+                    Console.WriteLine("2. In your load order, enable the plugin that was just generated.");
+                    Console.WriteLine("3. Start Synthesis");
+                    Console.WriteLine("4. In synthesis, create a new group with a difffernt name and add a copy of the unofficialReqtificatorLite to the new group.");
+                    Console.WriteLine("5. Run the Reqtificator Lite in this new synthesis group.");
+                    Console.WriteLine("6. The Reqtificator Lite will start where it left off and continue to patch all records.");
+                }
+                if (stopBeforeLimit == true)
+                {
+                    continue;
+                }
+                if (formSettings.Value.ReqOn)
                     {
                     if (modKey == "Requiem for the Indifferent.esp")
                     {
@@ -650,6 +671,10 @@ public class Program
                 if (lockpickingScriptBound) {
                     continue; }
 
+                if (!masterList.Contains(modKey.ToString()))
+                {
+                    masterList.Add(modKey.ToString());
+                }
                 var modifiedDoorr = state.PatchMod.Doors.GetOrAddAsOverride(doorr);
                         modifiedDoorr.VirtualMachineAdapter ??= new VirtualMachineAdapter();
                         modifiedDoorr.VirtualMachineAdapter.Scripts.Add(lockPickingControScript);
@@ -667,7 +692,24 @@ public class Program
                 {
                 uint npcFromSelectedMod = 0;
                 ModKey modKey = contt.FormKey.ModKey.FileName;
-                    if (formSettings.Value.ReqOn)
+                if (masterList.Count > 250 && stopBeforeLimit == false)
+                {
+                    stopBeforeLimit = true;
+                    Console.WriteLine("Generated plugin will contain more than 250 masters.");
+                    Console.WriteLine("The Reqtificator Lite will now stop patching and will save the esp.");
+                    Console.WriteLine("To continue patching, copy this message somewhere you can read it and follow the steps below:");
+                    Console.WriteLine("1. Close Synthesis");
+                    Console.WriteLine("2. In your load order, enable the plugin that was just generated.");
+                    Console.WriteLine("3. Start Synthesis");
+                    Console.WriteLine("4. In synthesis, create a new group with a difffernt name and add a copy of the unofficialReqtificatorLite to the new group.");
+                    Console.WriteLine("5. Run the Reqtificator Lite in this new synthesis group.");
+                    Console.WriteLine("6. The Reqtificator Lite will start where it left off and continue to patch all records.");
+                }
+                if (stopBeforeLimit == true)
+                {
+                    continue;
+                }
+                if (formSettings.Value.ReqOn)
                     {
                     if (modKey == "Requiem for the Indifferent.esp")
                     {
@@ -707,6 +749,10 @@ public class Program
                 if (lockpickingScriptBound)
                 {
                     continue;
+                }
+                if (!masterList.Contains(modKey.ToString()))
+                {
+                    masterList.Add(modKey.ToString());
                 }
                 var modifiedContt = state.PatchMod.Containers.GetOrAddAsOverride(contt);
                         modifiedContt.VirtualMachineAdapter ??= new VirtualMachineAdapter();
