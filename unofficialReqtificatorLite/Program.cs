@@ -24,7 +24,6 @@ using Mutagen.Bethesda.Skyrim;
 using ScriptProperty = Mutagen.Bethesda.Skyrim.ScriptProperty;
 using VirtualMachineAdapter = Mutagen.Bethesda.Skyrim.VirtualMachineAdapter;
 using IQuest = Mutagen.Bethesda.Skyrim.IQuest;
-using System.Collections;
 
 
 // Function to initialize the matches dictionary with all keys set to 0
@@ -93,37 +92,8 @@ public class Program
         FormKey formkeyActor = FormKey.Factory("000800:RFTI_Alternative_Keyword.esp");
         FormKey formkeyWeap = FormKey.Factory("000801:RFTI_Alternative_Keyword.esp");
         FormKey formkeyArmo = FormKey.Factory("000802:RFTI_Alternative_Keyword.esp");
-        FormKey formKeyPatched = FormKey.Factory("000802:RFTI_Alternative_Keyword.esp");
-
-
-        bool formKeyUptoDate = false;
-        try
-        {
-             formKeyPatched = FormKey.Factory("000803:RFTI_Alternative_Keyword.esp");
-            formKeyUptoDate = true;
-
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("RFTI_Alternative_Keyword.esp IS NOT UP TO DATE.");
-            Console.WriteLine("Please download update from nexus page.");
-        }
-
-        var newKeyGetter = Skyrim.Keyword.ActorTypeNPC.Resolve(state.LinkCache);
-
-        if (formKeyUptoDate == false)
-        {
-            var newKey = state.PatchMod.Keywords.DuplicateInAsNewRecord(newKeyGetter);
-            newKey.EditorID = "patched_RFTIAlternative";
-            formKeyPatched = newKey.FormKey;
-        }
-       
-
-        foreach (var keyy in state.LoadOrder.PriorityOrder.Keyword().WinningOverrides()){
-
-        }
-        
-
+     
+    
         //public readonly Mutagen.Bethesda.Skyrim.ScriptEntry _lockPickingScript;
         var lockPickingControScript = new Mutagen.Bethesda.Skyrim.ScriptEntry
         {
@@ -150,8 +120,7 @@ public class Program
         var mod = state.LoadOrder.TryGetValue("Requiem for the Indifferent.esp");
         //Console.WriteLine(mod);
         var masters = mod?.Mod?.ModHeader.MasterReferences;
-        List<string> masterList = new List<string>();
-        bool stopBeforeLimit = false;
+        
         
 
     
@@ -163,30 +132,6 @@ public class Program
 
 
                         ModKey modKey = npc.FormKey.ModKey.FileName;
-                bool hasBeenPatched = false;
-                
-                if ( masterList.Count > 250 && stopBeforeLimit == false)
-                {
-                     stopBeforeLimit = true;
-                    Console.WriteLine("Generated plugin will contain more than 250 masters.");
-                  Console.WriteLine("The Reqtificator Lite will now stop patching and will save the esp.");
-                  Console.WriteLine("To continue patching, copy this message somewhere you can read it and follow the steps below:");
-                    Console.WriteLine("1. Close Synthesis");
-                    Console.WriteLine("2. In your load order, enable the plugin that was just generated.");
-                    Console.WriteLine("3. Start Synthesis");
-                    Console.WriteLine("4. In synthesis, create a new group with a difffernt name and add a copy of the unofficialReqtificatorLite to the new group.");
-                  Console.WriteLine("5. Run the Reqtificator Lite in this new synthesis group.");
-                    Console.WriteLine("6. The Reqtificator Lite will start where it left off and continue to patch all records.");
-                }
-                if (stopBeforeLimit == true) {
-                    continue;
-                }
-                 hasBeenPatched = npc.Keywords?.Any(s => s.FormKey == formKeyPatched) ?? false;
-                if (hasBeenPatched == true)
-                {
-                    continue;
-                }
-
                 uint npcFromSelectedMod = 0;
                 if (formSettings.Value.ReqOn)
                     {
@@ -231,15 +176,10 @@ public class Program
                 {
                     continue;
                 }
-                if (!masterList.Contains(modKey.ToString()))
-                {
-                    masterList.Add(modKey.ToString());
-                }
                 var modifiedNpc = state.PatchMod.Npcs.GetOrAddAsOverride(npc);
                     modifiedNpc.Keywords ??= new();
                     modifiedNpc.Keywords.Add(formkeyActor);
-                    modifiedNpc.Keywords.Add(formKeyPatched);
-            }
+                }
                
                 
 
@@ -250,31 +190,7 @@ public class Program
                 {
                 uint npcFromSelectedMod = 0;
                 ModKey modKey = weap.FormKey.ModKey.FileName;
-                bool hasBeenPatched = false;
-               
-                if ( masterList.Count > 250 && stopBeforeLimit == false)
-                {
-                    stopBeforeLimit = true;
-                    Console.WriteLine("Generated plugin will contain more than 250 masters.");
-                    Console.WriteLine("The Reqtificator Lite will now stop patching and will save the esp.");
-                    Console.WriteLine("To continue patching, copy this message somewhere you can read it and follow the steps below:");
-                    Console.WriteLine("1. Close Synthesis");
-                    Console.WriteLine("2. In your load order, enable the plugin that was just generated.");
-                    Console.WriteLine("3. Start Synthesis");
-                    Console.WriteLine("4. In synthesis, create a new group with a difffernt name and add a copy of the unofficialReqtificatorLite to the new group.");
-                    Console.WriteLine("5. Run the Reqtificator Lite in this new synthesis group.");
-                    Console.WriteLine("6. The Reqtificator Lite will start where it left off and continue to patch all records.");
-                }
-                if (stopBeforeLimit == true)
-                {
-                    continue;
-                }
-                hasBeenPatched = weap.Keywords?.Any(s => s.FormKey == formKeyPatched) ?? false;
-                if (hasBeenPatched == true)
-                {
-                    continue;
-                }
-                if (formSettings.Value.ReqOn)
+                    if (formSettings.Value.ReqOn)
                     {
                     if (modKey == "Requiem for the Indifferent.esp")
                     {
@@ -351,15 +267,10 @@ public class Program
                             _ => null
                         };
 
-                if (!masterList.Contains(modKey.ToString()))
-                {
-                    masterList.Add(modKey.ToString());
-                }
-                var modifiedWeap = state.PatchMod.Weapons.GetOrAddAsOverride(weap);
+                        var modifiedWeap = state.PatchMod.Weapons.GetOrAddAsOverride(weap);
                         modifiedWeap.Keywords ??= new();
                         modifiedWeap.Keywords.Add(formkeyWeap);
-                        modifiedWeap.Keywords.Add(formKeyPatched);
-                try
+                        try
                         {
                             modifiedWeap.BasicStats!.Damage = (ushort)(modifiedWeap.BasicStats!.Damage * factor!);
                         }
@@ -412,33 +323,8 @@ public class Program
             foreach (var ammoo in state.LoadOrder.PriorityOrder.Ammunition().WinningOverrides())
                 {
                  uint npcFromSelectedMod = 0;
-
                     ModKey modKey = ammoo.FormKey.ModKey.FileName;
-                bool hasBeenPatched = false;
-                
-                if ( masterList.Count > 250 && stopBeforeLimit == false)
-                {
-                    stopBeforeLimit = true;
-                    Console.WriteLine("Generated plugin will contain more than 250 masters.");
-                    Console.WriteLine("The Reqtificator Lite will now stop patching and will save the esp.");
-                    Console.WriteLine("To continue patching, copy this message somewhere you can read it and follow the steps below:");
-                    Console.WriteLine("1. Close Synthesis");
-                    Console.WriteLine("2. In your load order, enable the plugin that was just generated.");
-                    Console.WriteLine("3. Start Synthesis");
-                    Console.WriteLine("4. In synthesis, create a new group with a difffernt name and add a copy of the unofficialReqtificatorLite to the new group.");
-                    Console.WriteLine("5. Run the Reqtificator Lite in this new synthesis group.");
-                    Console.WriteLine("6. The Reqtificator Lite will start where it left off and continue to patch all records.");
-                }
-                if (stopBeforeLimit == true)
-                {
-                    continue;
-                }
-                hasBeenPatched = ammoo.Keywords?.Any(s => s.FormKey == formKeyPatched) ?? false;
-                if (hasBeenPatched == true)
-                {
-                    continue;
-                }
-                if (formSettings.Value.ReqOn)
+                    if (formSettings.Value.ReqOn)
                     {
 
                     if (modKey == "Requiem for the Indifferent.esp")
@@ -478,14 +364,8 @@ public class Program
                         {
                             if (ammoo.Damage > 0)
                             {
-                        if (!masterList.Contains(modKey.ToString()))
-                        {
-                            masterList.Add(modKey.ToString());
-                        }
-                        var moddifiedAmmo = state.PatchMod.Ammunitions.GetOrAddAsOverride(ammoo);
+                                var moddifiedAmmo = state.PatchMod.Ammunitions.GetOrAddAsOverride(ammoo);
                                 moddifiedAmmo.Damage *= 4;
-                        moddifiedAmmo.Keywords ??= new();
-                        moddifiedAmmo.Keywords.Add(formKeyPatched);
 
                             }
 
@@ -504,33 +384,9 @@ public class Program
             {
                 uint npcFromSelectedMod = 0;
                 ModKey modKey = armo.FormKey.ModKey.FileName;
-                bool hasBeenPatched = false;
-               
-                if ( masterList.Count > 250 && stopBeforeLimit == false)
-                {
-                    stopBeforeLimit = true;
-                    Console.WriteLine("Generated plugin will contain more than 250 masters.");
-                    Console.WriteLine("The Reqtificator Lite will now stop patching and will save the esp.");
-                    Console.WriteLine("To continue patching, copy this message somewhere you can read it and follow the steps below:");
-                    Console.WriteLine("1. Close Synthesis");
-                    Console.WriteLine("2. In your load order, enable the plugin that was just generated.");
-                    Console.WriteLine("3. Start Synthesis");
-                    Console.WriteLine("4. In synthesis, create a new group with a difffernt name and add a copy of the unofficialReqtificatorLite to the new group.");
-                    Console.WriteLine("5. Run the Reqtificator Lite in this new synthesis group.");
-                    Console.WriteLine("6. The Reqtificator Lite will start where it left off and continue to patch all records.");
-                }
-                if (stopBeforeLimit == true)
-                {
-                    continue;
-                }
-                hasBeenPatched = armo.Keywords?.Any(s => s.FormKey == formKeyPatched) ?? false;
-                if (hasBeenPatched == true)
-                {
-                    continue;
-                }
 
 
-                if (formSettings.Value.ReqOn)
+                    if (formSettings.Value.ReqOn)
                     {
                     if (modKey == "Requiem for the Indifferent.esp")
                     {
@@ -586,15 +442,10 @@ public class Program
                             {
                                 if (slot.ToString()!.Contains("Body") || slot.ToString()!.Contains("Head") || slot.ToString()!.Contains("Feet") || slot.ToString()!.Contains("Hands"))
                                 {
-                            if (!masterList.Contains(modKey.ToString()))
-                            {
-                                masterList.Add(modKey.ToString());
-                            }
-                            var modifiedArmo = state.PatchMod.Armors.GetOrAddAsOverride(armo);
+                                    var modifiedArmo = state.PatchMod.Armors.GetOrAddAsOverride(armo);
 
                                     modifiedArmo.Keywords ??= new();
                                     modifiedArmo.Keywords.Add(formkeyArmo);
-                                    modifiedArmo.Keywords.Add(formKeyPatched);
                                     modifiedArmo.ArmorRating = modifiedArmo.ArmorRating * factor + offset;
                                 }
 
@@ -615,24 +466,7 @@ public class Program
                 {
                 uint npcFromSelectedMod = 0;
                 ModKey modKey = doorr.FormKey.ModKey.FileName;
-                if (masterList.Count > 250 && stopBeforeLimit == false)
-                {
-                    stopBeforeLimit = true;
-                    Console.WriteLine("Generated plugin will contain more than 250 masters.");
-                    Console.WriteLine("The Reqtificator Lite will now stop patching and will save the esp.");
-                    Console.WriteLine("To continue patching, copy this message somewhere you can read it and follow the steps below:");
-                    Console.WriteLine("1. Close Synthesis");
-                    Console.WriteLine("2. In your load order, enable the plugin that was just generated.");
-                    Console.WriteLine("3. Start Synthesis");
-                    Console.WriteLine("4. In synthesis, create a new group with a difffernt name and add a copy of the unofficialReqtificatorLite to the new group.");
-                    Console.WriteLine("5. Run the Reqtificator Lite in this new synthesis group.");
-                    Console.WriteLine("6. The Reqtificator Lite will start where it left off and continue to patch all records.");
-                }
-                if (stopBeforeLimit == true)
-                {
-                    continue;
-                }
-                if (formSettings.Value.ReqOn)
+                    if (formSettings.Value.ReqOn)
                     {
                     if (modKey == "Requiem for the Indifferent.esp")
                     {
@@ -667,21 +501,12 @@ public class Program
                 {
                     continue;
                 }
-                bool lockpickingScriptBound = doorr.VirtualMachineAdapter?.Scripts.Any(s => s.Name == lockPickingControScript.Name) ?? false; 
-                if (lockpickingScriptBound) {
-                    continue; }
-
-                if (!masterList.Contains(modKey.ToString()))
-                {
-                    masterList.Add(modKey.ToString());
-                }
                 var modifiedDoorr = state.PatchMod.Doors.GetOrAddAsOverride(doorr);
                         modifiedDoorr.VirtualMachineAdapter ??= new VirtualMachineAdapter();
                         modifiedDoorr.VirtualMachineAdapter.Scripts.Add(lockPickingControScript);
-                
+                    
 
-
-
+                  
 
                 }
 
@@ -692,24 +517,7 @@ public class Program
                 {
                 uint npcFromSelectedMod = 0;
                 ModKey modKey = contt.FormKey.ModKey.FileName;
-                if (masterList.Count > 250 && stopBeforeLimit == false)
-                {
-                    stopBeforeLimit = true;
-                    Console.WriteLine("Generated plugin will contain more than 250 masters.");
-                    Console.WriteLine("The Reqtificator Lite will now stop patching and will save the esp.");
-                    Console.WriteLine("To continue patching, copy this message somewhere you can read it and follow the steps below:");
-                    Console.WriteLine("1. Close Synthesis");
-                    Console.WriteLine("2. In your load order, enable the plugin that was just generated.");
-                    Console.WriteLine("3. Start Synthesis");
-                    Console.WriteLine("4. In synthesis, create a new group with a difffernt name and add a copy of the unofficialReqtificatorLite to the new group.");
-                    Console.WriteLine("5. Run the Reqtificator Lite in this new synthesis group.");
-                    Console.WriteLine("6. The Reqtificator Lite will start where it left off and continue to patch all records.");
-                }
-                if (stopBeforeLimit == true)
-                {
-                    continue;
-                }
-                if (formSettings.Value.ReqOn)
+                    if (formSettings.Value.ReqOn)
                     {
                     if (modKey == "Requiem for the Indifferent.esp")
                     {
@@ -743,16 +551,6 @@ public class Program
                 if (npcFromSelectedMod == 0)
                 {
                     continue;
-                }
-
-                bool lockpickingScriptBound = contt.VirtualMachineAdapter?.Scripts.Any(s => s.Name == lockPickingControScript.Name) ?? false;
-                if (lockpickingScriptBound)
-                {
-                    continue;
-                }
-                if (!masterList.Contains(modKey.ToString()))
-                {
-                    masterList.Add(modKey.ToString());
                 }
                 var modifiedContt = state.PatchMod.Containers.GetOrAddAsOverride(contt);
                         modifiedContt.VirtualMachineAdapter ??= new VirtualMachineAdapter();
