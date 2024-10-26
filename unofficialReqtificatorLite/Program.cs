@@ -163,6 +163,16 @@ public class Program
         string outputPath = $@"{state.DataFolderPath}\ReqLite_IgnoreThesePlugins.txt";
 
         string reqPerksAll = $@"{state.DataFolderPath}\RFTIL_perks_all.txt";
+ if (!File.Exists(reqPerksAll))
+ {
+     Console.WriteLine("ERROR ERROR ERROR ERROR");
+     Console.WriteLine("ERROR ERROR ERROR ERROR");
+     Console.WriteLine("ERROR ERROR ERROR ERROR");
+     Console.WriteLine("Necessary .txt files not found. Please go to the nexus page and download and install the newest Version.");
+Console.WriteLine("Necessary .txt files not found. Please go to the nexus page and download and install the newest Version.");
+Console.WriteLine("Necessary .txt files not found. Please go to the nexus page and download and install the newest Version.");
+ }
+
         string reqSpellsAll = $@"{state.DataFolderPath}\RFTIL_spells_all.txt";
         string reqSpellsRaces = $@"{state.DataFolderPath}\RFTIL_spells_races.txt";
         string reqSpellsRaces_Fozar = $@"{state.DataFolderPath}\RFTIL_spells_races_fozar.txt";
