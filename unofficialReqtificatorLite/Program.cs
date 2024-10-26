@@ -93,32 +93,8 @@ public class Program
         FormKey formkeyActor = FormKey.Factory("000800:RFTI_Alternative_Keyword.esp");
         FormKey formkeyArmo = FormKey.Factory("000801:RFTI_Alternative_Keyword.esp");
         FormKey  formkeyWeap = FormKey.Factory("000802:RFTI_Alternative_Keyword.esp");
-        FormKey formKeyPatched = FormKey.Factory("000802:RFTI_Alternative_Keyword.esp");
+        FormKey formKeyPatched = FormKey.Factory("000803:RFTI_Alternative_Keyword.esp");
    
-
-
-        bool formKeyUptoDate = false;
-        try
-        {
-             
-            formKeyUptoDate = true;
-
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("RFTI_Alternative_Keyword.esp IS NOT UP TO DATE.");
-            Console.WriteLine("Please download update from nexus page.");
-        }
-
-        var newKeyGetter = Skyrim.Keyword.ActorTypeNPC.Resolve(state.LinkCache);
-
-        if (formKeyUptoDate == false)
-        {
-            var newKey = state.PatchMod.Keywords.DuplicateInAsNewRecord(newKeyGetter);
-            newKey.EditorID = "patched_RFTIAlternative";
-            formKeyPatched = newKey.FormKey;
-        }
-       
 
         foreach (var keyy in state.LoadOrder.PriorityOrder.Keyword().WinningOverrides()){
 
