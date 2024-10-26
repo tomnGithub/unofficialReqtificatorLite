@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -25,6 +26,7 @@ using ScriptProperty = Mutagen.Bethesda.Skyrim.ScriptProperty;
 using VirtualMachineAdapter = Mutagen.Bethesda.Skyrim.VirtualMachineAdapter;
 using IQuest = Mutagen.Bethesda.Skyrim.IQuest;
 using System.Collections;
+using DynamicData;
 
 
 // Function to initialize the matches dictionary with all keys set to 0
@@ -53,6 +55,35 @@ public class Program
             // Write nothing to the file (effectively clearing its content)
         }
     }
+    static DataTable CreateDataTableFromCsv(string filePath)
+    {
+        DataTable dataTable = new DataTable();
+
+        // Read all lines from the CSV file
+        string[] lines = File.ReadAllLines(filePath);
+
+        if (lines.Length > 0)
+        {
+            // Determine the number of columns based on the first line
+            string[] firstLineValues = lines[0].Split(',');
+
+            // Add generic column names (Column1, Column2, etc.)
+            for (int col = 0; col < firstLineValues.Length; col++)
+            {
+                dataTable.Columns.Add("Column" + (col + 1));
+            }
+
+            // Add all rows starting from the first line
+            foreach (string line in lines)
+            {
+                string[] values = line.Split(',');
+                dataTable.Rows.Add(values);
+            }
+        }
+
+        return dataTable;
+    }
+
 
     public static Task<int> Main(string[] args)
     {
@@ -87,19 +118,16 @@ public class Program
 
             }
         }
-          
 
-        
+    
+        bool fozar = state.LoadOrder.PriorityOrder.Reverse().ModExists("Fozars_Dragonborn_ - _Requiem_Patch.esp");
+        bool MagicRedone = state.LoadOrder.PriorityOrder.Reverse().ModExists("Requiem - Magic Redone.esp");
+
         FormKey formkeyActor = FormKey.Factory("000800:RFTI_Alternative_Keyword.esp");
         FormKey formkeyArmo = FormKey.Factory("000801:RFTI_Alternative_Keyword.esp");
         FormKey  formkeyWeap = FormKey.Factory("000802:RFTI_Alternative_Keyword.esp");
         FormKey formKeyPatched = FormKey.Factory("000803:RFTI_Alternative_Keyword.esp");
    
-
-        foreach (var keyy in state.LoadOrder.PriorityOrder.Keyword().WinningOverrides()){
-
-        }
-        
 
         //public readonly Mutagen.Bethesda.Skyrim.ScriptEntry _lockPickingScript;
         var lockPickingControScript = new Mutagen.Bethesda.Skyrim.ScriptEntry
@@ -133,6 +161,29 @@ public class Program
 
         // Define the path to the file
         string outputPath = $@"{state.DataFolderPath}\ReqLite_IgnoreThesePlugins.txt";
+
+        string reqPerksAll = $@"{state.DataFolderPath}\RFTIL_perks_all.txt";
+        string reqSpellsAll = $@"{state.DataFolderPath}\RFTIL_spells_all.txt";
+        string reqSpellsRaces = $@"{state.DataFolderPath}\RFTIL_spells_races.txt";
+        string reqSpellsRaces_Fozar = $@"{state.DataFolderPath}\RFTIL_spells_races_fozar.txt";
+        string reqPerksRaces = $@"{state.DataFolderPath}\RFTIL_perks_races.txt";
+        string reqPerksRaces_Fozar = $@"{state.DataFolderPath}\RFTIL_perks_races_fozar.txt";
+        string reqPerksAll_MR = $@"{state.DataFolderPath}\RFTIL_perks_all_magic_redone.txt";
+        string reqKeysArmor = $@"{state.DataFolderPath}\RFTIL_armor_keywords.txt";
+        string reqKeysArmorBody = $@"{state.DataFolderPath}\RFTIL_armor_keywords_body.txt";
+        string reqKeysWeapons = $@"{state.DataFolderPath}\RFTIL_weapon_keywords.txt";
+
+        DataTable DB_reqPerksAll = CreateDataTableFromCsv(reqPerksAll);
+        DataTable DB_reqSpellsAll = CreateDataTableFromCsv(reqSpellsAll);
+        DataTable DB_reqSpellsRaces = CreateDataTableFromCsv(reqSpellsRaces);
+        DataTable DB_reqSpellsRaces_Fozar = CreateDataTableFromCsv(reqSpellsRaces_Fozar);
+        DataTable DB_reqPerksAll_MR = CreateDataTableFromCsv(reqPerksAll_MR);
+        DataTable DB_reqKeysArmor = CreateDataTableFromCsv(reqKeysArmor);
+        DataTable DB_reqKeysArmorBody = CreateDataTableFromCsv(reqKeysArmorBody);
+        DataTable DB_reqKeysWeapons = CreateDataTableFromCsv(reqKeysWeapons);
+        DataTable DB_reqPerksRaces = CreateDataTableFromCsv(reqPerksRaces);
+        DataTable DB_reqPerksRaces_Fozar = CreateDataTableFromCsv(reqPerksRaces_Fozar);
+
 
         // Check if the file exists and read it into ignoreList, else create it
         if (File.Exists(outputPath))
@@ -269,13 +320,129 @@ public class Program
                 }
                 var modifiedNpc = state.PatchMod.Npcs.GetOrAddAsOverride(npc);
                     modifiedNpc.Keywords ??= new();
+                if (formSettings.Value.spidOn == false)
+                {
                     modifiedNpc.Keywords.Add(formkeyActor);
+                }
+                    
                     modifiedNpc.Keywords.Add(formKeyPatched);
-            }
-               
-                
+                modifiedNpc.Perks ??= new();
+                if (formSettings.Value.spidOn == true)
+                {
+                    for (int i = 0; i < DB_reqPerksAll?.Rows.Count; i++)
+                    {
+                        //  Console.WriteLine((string)DB_reqPerksAll.Rows[i][0]);
+
+                        FormLink<IPerkGetter> perkToAdd = FormKey.Factory((string)DB_reqPerksAll.Rows[i][0]);
+                        modifiedNpc.Perks.Add(new PerkPlacement()
+                        {
+                            Perk = perkToAdd,
+                            Rank = 1
+                        });
+
+                    }
+                    modifiedNpc.ActorEffect ??= new();
+                    for (int i = 0; i < DB_reqSpellsAll?.Rows.Count; i++)
+                    {
+
+
+                        FormLink<ISpellGetter> SpellToAdd = FormKey.Factory((string)DB_reqSpellsAll.Rows[i][0]);
+                        modifiedNpc.ActorEffect.Add(SpellToAdd);
+                    }
+                    FormLink<IRaceGetter> raceGetter = modifiedNpc.Race.FormKey;
+                    var npcRace = raceGetter.Resolve(state.LinkCache);
+                    var raceOrigin = npcRace.FormKey.ModKey.ToString();
+                    
+                    if (raceOrigin == "Skyrim.esm" || raceOrigin == "Dawnguard.esm" || raceOrigin == "Dragonborn.esm")
+                    {
+
+                        for (int i = 0; i < DB_reqSpellsRaces?.Rows.Count; i++)
+                        {
+
+                            if (npcRace.EditorID!.ToString() == (string)DB_reqSpellsRaces.Rows[i][1])
+                            {
+                                modifiedNpc.ActorEffect ??= new();
+                                FormLink<ISpellGetter> SpellToAdd = FormKey.Factory((string)DB_reqSpellsRaces.Rows[i][0]);
+                                modifiedNpc.ActorEffect.Add(SpellToAdd);
+
+                            }
+
+                        }
+                        for (int i = 0; i < DB_reqPerksRaces?.Rows.Count; i++)
+                        {
+
+
+
+                            if (npcRace.EditorID!.ToString() == (string)DB_reqPerksRaces.Rows[i][1])
+                            {
+                                FormLink<IPerkGetter> perkToAdd = FormKey.Factory((string)DB_reqPerksRaces.Rows[i][0]);
+                                modifiedNpc.Perks.Add(new PerkPlacement()
+                                {
+                                    Perk = perkToAdd,
+                                    Rank = 1
+                                });
+                            }
+                 
+
+                        }
+
+                        if (fozar == true)
+                    {
+                        for (int i = 0; i < DB_reqSpellsRaces_Fozar?.Rows.Count; i++)
+                        {
+                            if (npcRace.EditorID!.ToString() == (string)DB_reqSpellsRaces_Fozar.Rows[i][1])
+                            {
+                                modifiedNpc.ActorEffect ??= new();
+                                FormLink<ISpellGetter> SpellToAdd = FormKey.Factory((string)DB_reqSpellsRaces_Fozar.Rows[i][0]);
+                                modifiedNpc.ActorEffect.Add(SpellToAdd);
+
+                            }
+
+                        }
+                            for (int i = 0; i < DB_reqPerksRaces_Fozar?.Rows.Count; i++)
+                            {
+
+
+                                
+                                if (npcRace.EditorID!.ToString() == (string)DB_reqPerksRaces_Fozar.Rows[i][1])
+                                {
+                                    FormLink<IPerkGetter> perkToAdd = FormKey.Factory((string)DB_reqPerksRaces_Fozar.Rows[i][0]);
+                                    modifiedNpc.Perks.Add(new PerkPlacement()
+                                    {
+                                        Perk = perkToAdd,
+                                        Rank = 1
+                                    });
+                                }
+
+
+                            }
+
+                        }
+                }
+                    if (MagicRedone == true)
+                    {
+                        for (int i = 0; i < DB_reqPerksAll_MR?.Rows.Count; i++)
+                        {
+                            modifiedNpc.Perks ??= new();
+                            FormLink<IPerkGetter> perkToAdd = FormKey.Factory((string)DB_reqPerksAll_MR.Rows[i][0]);
+                            modifiedNpc.Perks.Add(new PerkPlacement()
+                            {
+                                Perk = perkToAdd,
+                                Rank = 1
+                            });
+
+                        }
+                    }
+
+
+                }
+
 
             }
+
+
+
+        }
             if (formSettings.Value.WeaponsOn)
             {
                 foreach (var weap in state.LoadOrder.PriorityOrder.Weapon().WinningOverrides())
@@ -391,7 +558,11 @@ public class Program
                 }
                 var modifiedWeap = state.PatchMod.Weapons.GetOrAddAsOverride(weap);
                         modifiedWeap.Keywords ??= new();
-                        modifiedWeap.Keywords.Add(formkeyWeap);
+
+                if (formSettings.Value.spidOn == false)
+                {
+                    modifiedWeap.Keywords.Add(formkeyWeap);
+                }
                         modifiedWeap.Keywords.Add(formKeyPatched);
                 try
                         {
@@ -430,15 +601,28 @@ public class Program
                             }
                         }
                         catch { }
-                    
+
+
+
+                if (formSettings.Value.spidOn == true)
+                {
+                    for (int i = 0; i < DB_reqKeysWeapons?.Rows.Count; i++)
+                    {
+                        bool loopHasKeyword = modifiedWeap.Keywords?.Any(s => s.FormKey == FormKey.Factory((string)DB_reqKeysWeapons.Rows[i][1])) ?? false;
+                        if (loopHasKeyword)
+                        {
+                            modifiedWeap.Keywords ??= new();
+                            modifiedWeap.Keywords.Add(FormKey.Factory((string)DB_reqKeysWeapons.Rows[i][0]));
+
+                        }
+                    }
+                }
                    
 
 
 
-
-
-                    // .BasicStats?.Damage = (ushort)(r.BasicStats.Damage * factor)
-                }
+                // .BasicStats?.Damage = (ushort)(r.BasicStats.Damage * factor)
+            }
             }
             if (formSettings.Value.ArrowsOn)
             {
@@ -631,12 +815,49 @@ public class Program
                             var modifiedArmo = state.PatchMod.Armors.GetOrAddAsOverride(armo);
 
                                     modifiedArmo.Keywords ??= new();
-                                    modifiedArmo.Keywords.Add(formkeyArmo);
-                                    modifiedArmo.Keywords.Add(formKeyPatched);
-                                    modifiedArmo.ArmorRating = modifiedArmo.ArmorRating * factor + offset;
-                                }
-
+                            if (formSettings.Value.spidOn == false)
+                            {
+                                modifiedArmo.Keywords.Add(formkeyArmo);
                             }
+                                    modifiedArmo.Keywords.Add(formKeyPatched);
+                          if(modifiedArmo.ArmorRating > 0)
+                            {
+                                modifiedArmo.ArmorRating = modifiedArmo.ArmorRating * factor + offset;
+                            }
+                                  
+                            if (formSettings.Value.spidOn == true)
+                            {
+                                for (int i = 0; i < DB_reqKeysArmor?.Rows.Count; i++)
+                                {
+                                    bool loopHasKeyword = modifiedArmo.Keywords?.Any(s => s.FormKey == FormKey.Factory((string)DB_reqKeysArmor.Rows[i][1])) ?? false;
+                                    if (loopHasKeyword)
+                                    {
+                                        modifiedArmo.Keywords ??= new();
+                                        modifiedArmo.Keywords.Add(FormKey.Factory((string)DB_reqKeysArmor.Rows[i][0]));
+
+                                    }
+                                }
+                                bool isBodyArm = modifiedArmo.Keywords?.Any(s => s.FormKey == FormKey.Factory((string)DB_reqKeysArmorBody!.Rows[0][2])) ?? false;
+                                if (isBodyArm)
+                                {
+                                    for (int i = 0; i < DB_reqKeysArmorBody?.Rows.Count; i++)
+                                    {
+                                        bool loopHasKeyword = modifiedArmo.Keywords?.Any(s => s.FormKey == FormKey.Factory((string)DB_reqKeysArmorBody.Rows[i][1])) ?? false;
+                                        if (loopHasKeyword)
+                                        {
+                                            modifiedArmo.Keywords ??= new();
+                                            modifiedArmo.Keywords.Add(FormKey.Factory((string)DB_reqKeysArmorBody.Rows[i][0]));
+
+                                        }
+                                    }
+                                }
+                            }
+                                     
+
+
+                        }
+
+                    }
                         }
                         catch { }
                     
