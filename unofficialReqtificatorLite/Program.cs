@@ -866,7 +866,7 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
 
                             if (armorType.ToString() == "HeavyArmor" || armorType.ToString() == "LightArmor")
                             {
-                                if (slot.ToString()!.Contains("Body") || slot.ToString()!.Contains("Head") || slot.ToString()!.Contains("Feet") || slot.ToString()!.Contains("Hands"))
+                                if (slot.ToString()!.Contains("Body") || slot.ToString()!.Contains("Head") || slot.ToString()!.Contains("Feet") || slot.ToString()!.Contains("Hands") || slot.ToString()!.Contains("Shield"))
                                 {
                             if (!masterList.Contains(modKey.ToString()))
                             {
