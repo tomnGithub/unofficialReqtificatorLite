@@ -129,7 +129,13 @@ public class Program
         FormKey formkeyArmo = FormKey.Factory("000801:RFTI_Alternative_Keyword.esp");
         FormKey  formkeyWeap = FormKey.Factory("000802:RFTI_Alternative_Keyword.esp");
         FormKey formKeyPatched = FormKey.Factory("000803:RFTI_Alternative_Keyword.esp");
-   
+        FormKey noDamgeRescale = FormKey.Factory("AD3B2D:Requiem.esp");
+        FormKey noArmorRescale = FormKey.Factory("AD3B2B:Requiem.esp");
+        FormKey noWeaponReach = FormKey.Factory("AD3B2E:Requiem.esp");
+        FormKey NoBowSpeedRescale = FormKey.Factory("AD3B2F:Requiem.esp");
+
+      
+
 
         //public readonly Mutagen.Bethesda.Skyrim.ScriptEntry _lockPickingScript;
         var lockPickingControScript = new Mutagen.Bethesda.Skyrim.ScriptEntry
@@ -593,14 +599,25 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                         modifiedWeap.Keywords.Add(formKeyPatched);
                 try
                         {
-                            modifiedWeap.BasicStats!.Damage = (ushort)(modifiedWeap.BasicStats!.Damage * factor!);
+                    bool hasNoRescale = modifiedWeap.Keywords?.Any(s => s.FormKey == noDamgeRescale) ?? false;
+                    if (hasNoRescale == false)
+                    {
+                        modifiedWeap.BasicStats!.Damage = (ushort)(modifiedWeap.BasicStats!.Damage * factor!);
+                    }
+
+                   
                         }
                         catch { }
                         try
                         {
                             if (isBow == false)
                             {
-                                modifiedWeap.Data!.Reach *= 0.7f;
+                        bool hasNoWeaponReach = modifiedWeap.Keywords?.Any(s => s.FormKey == noWeaponReach) ?? false;
+                        if (hasNoWeaponReach == false)
+                        {
+                            modifiedWeap.Data!.Reach *= 0.7f;
+                        }
+                           
                             }
 
 
@@ -613,19 +630,25 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                         catch { }
                         try
                         {
-                            if (isBow == true)
+                    bool hasNoBowSpeedRescale = modifiedWeap.Keywords?.Any(s => s.FormKey == NoBowSpeedRescale) ?? false;
+
+                    if(hasNoBowSpeedRescale == false)
+                    {
+                        if (isBow == true)
+                        {
+                            if (isXBow == false)
                             {
-                                if (isXBow == false)
-                                {
-                                    modifiedWeap.Data!.Speed = 0.3704f;
-                                }
+                                modifiedWeap.Data!.Speed = 0.3704f;
                             }
-                            if (isXBow == true)
-                            {
-                                modifiedWeap.Data!.Speed = 0.4445f;
+                        }
+                        if (isXBow == true)
+                        {
+                            modifiedWeap.Data!.Speed = 0.4445f;
 
 
-                            }
+                        }
+                    }
+                           
                         }
                         catch { }
 
@@ -662,6 +685,7 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                 
                 bool hasBeenPatched = false;
                 
+
                 if ( masterList.Count > formSettings.Value.maxNumP && stopBeforeLimit == false)
                 {
                     stopBeforeLimit = true;
@@ -684,6 +708,15 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                 {
                     continue;
                 }
+
+               
+               bool hasNoRescale = ammoo.Keywords?.Any(s => s.FormKey == noDamgeRescale) ?? false;
+                if (hasNoRescale == true)
+                {
+                    continue;
+                }
+
+
                 if (autoPatchEnabled)
                     {npcFromSelectedMod = 1;
 
@@ -849,7 +882,13 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                                     modifiedArmo.Keywords.Add(formKeyPatched);
                           if(modifiedArmo.ArmorRating > 0)
                             {
-                                modifiedArmo.ArmorRating = modifiedArmo.ArmorRating * factor + offset;
+
+                                bool hasnoArmorRescale = modifiedArmo.Keywords?.Any(s => s.FormKey == noArmorRescale) ?? false;
+                                if (hasnoArmorRescale == false)
+                                {
+                                    modifiedArmo.ArmorRating = modifiedArmo.ArmorRating * factor + offset;
+                                }
+                                
                             }
                                   
                             if (formSettings.Value.spidOn == true)
