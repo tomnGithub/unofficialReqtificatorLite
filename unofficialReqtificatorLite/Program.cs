@@ -27,6 +27,7 @@ using VirtualMachineAdapter = Mutagen.Bethesda.Skyrim.VirtualMachineAdapter;
 using IQuest = Mutagen.Bethesda.Skyrim.IQuest;
 using System.Collections;
 using DynamicData;
+using Newtonsoft.Json;
 
 
 // Function to initialize the matches dictionary with all keys set to 0
@@ -122,6 +123,7 @@ public class Program
     
         bool fozar = state.LoadOrder.PriorityOrder.Reverse().ModExists("Fozars_Dragonborn_ - _Requiem_Patch.esp");
         bool MagicRedone = state.LoadOrder.PriorityOrder.Reverse().ModExists("Requiem - Magic Redone.esp");
+        bool WeapRedone = state.LoadOrder.PriorityOrder.Reverse().ModExists("Requiem - Weapons and Armor Redone");
 
         FormKey formkeyActor = FormKey.Factory("000800:RFTI_Alternative_Keyword.esp");
         FormKey formkeyArmo = FormKey.Factory("000801:RFTI_Alternative_Keyword.esp");
@@ -442,6 +444,21 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                             });
 
                         }
+                    }
+                    if (WeapRedone == true) {
+                        modifiedNpc.Perks ??= new();
+                        FormLink<IPerkGetter> perkToAdd = FormKey.Factory("660853:Requiem - Weapons and Armor Redone");
+                        FormLink<IPerkGetter> perkToAddsec = FormKey.Factory("6608E9:Requiem - Weapons and Armor Redone");
+                        modifiedNpc.Perks.Add(new PerkPlacement()
+                        {
+                            Perk = perkToAdd,
+                            Rank = 1
+                        });
+                        modifiedNpc.Perks.Add(new PerkPlacement()
+                        {
+                            Perk = perkToAddsec,
+                            Rank = 1
+                        });
                     }
 
 
