@@ -123,7 +123,7 @@ public class Program
     
         bool fozar = state.LoadOrder.PriorityOrder.Reverse().ModExists("Fozars_Dragonborn_ - _Requiem_Patch.esp");
         bool MagicRedone = state.LoadOrder.PriorityOrder.Reverse().ModExists("Requiem - Magic Redone.esp");
-        bool WeapRedone = state.LoadOrder.PriorityOrder.Reverse().ModExists("Requiem - Weapons and Armor Redone");
+        bool WeapRedone = state.LoadOrder.PriorityOrder.Reverse().ModExists("Requiem - Weapons and Armor Redone.esp");
 
         FormKey formkeyActor = FormKey.Factory("000800:RFTI_Alternative_Keyword.esp");
         FormKey formkeyArmo = FormKey.Factory("000801:RFTI_Alternative_Keyword.esp");
@@ -447,8 +447,8 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                     }
                     if (WeapRedone == true) {
                         modifiedNpc.Perks ??= new();
-                        FormLink<IPerkGetter> perkToAdd = FormKey.Factory("660853:Requiem - Weapons and Armor Redone");
-                        FormLink<IPerkGetter> perkToAddsec = FormKey.Factory("6608E9:Requiem - Weapons and Armor Redone");
+                        FormLink<IPerkGetter> perkToAdd = FormKey.Factory("660853:Requiem - Weapons and Armor Redone.esp");
+                        FormLink<IPerkGetter> perkToAddsec = FormKey.Factory("6608E9:Requiem - Weapons and Armor Redone.esp");
                         modifiedNpc.Perks.Add(new PerkPlacement()
                         {
                             Perk = perkToAdd,
