@@ -453,8 +453,8 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                     }
                     if (WeapRedone == true) {
                         modifiedNpc.Perks ??= new();
-                        FormLink<IPerkGetter> perkToAdd = FormKey.Factory("660853:Requiem - Weapons and Armor Redone.esp");
-                        FormLink<IPerkGetter> perkToAddsec = FormKey.Factory("6608E9:Requiem - Weapons and Armor Redone.esp");
+                        FormLink<IPerkGetter> perkToAdd = FormKey.Factory("000853:Requiem - Weapons and Armor Redone.esp");
+                        FormLink<IPerkGetter> perkToAddsec = FormKey.Factory("0008E9:Requiem - Weapons and Armor Redone.esp");
                         modifiedNpc.Perks.Add(new PerkPlacement()
                         {
                             Perk = perkToAdd,
