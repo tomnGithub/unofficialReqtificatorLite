@@ -849,6 +849,7 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                 }
                 float offset = 18.0f;
                         float factor = 3.3f;
+                bool hasnoArmorRescale = false;
                         try
                         {
                             var armorType = armo.BodyTemplate?.ArmorType;
@@ -859,10 +860,11 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                             {
                                 offset = 66.0f;
                             }
-                            if (armorType.ToString() == "HeavyArmor")
-                            {
-                                factor = 6.6f;
-                            }
+                    if (armorType.ToString() == "HeavyArmor")
+                    {
+                        factor = 6.6f;
+                    }
+                       
 
                             if (armorType.ToString() == "HeavyArmor" || armorType.ToString() == "LightArmor")
                             {
@@ -883,7 +885,54 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                           if(modifiedArmo.ArmorRating > 0)
                             {
 
-                                bool hasnoArmorRescale = modifiedArmo.Keywords?.Any(s => s.FormKey == noArmorRescale) ?? false;
+                                 hasnoArmorRescale = modifiedArmo.Keywords?.Any(s => s.FormKey == noArmorRescale) ?? false;
+                                if (armorType.ToString() == "HeavyArmor")
+                                {
+
+                                    if (slot.ToString()!.Contains("Body"))
+                                    {
+                                        if (armo.ArmorRating >= 74) { hasnoArmorRescale = true; }
+                                    }
+                                    if (slot.ToString()!.Contains("Head"))
+                                    {
+                                        if (armo.ArmorRating >= 35) { hasnoArmorRescale = true; }
+                                    }
+                                    if (slot.ToString()!.Contains("Feet"))
+                                    {
+                                        if (armo.ArmorRating >= 27) { hasnoArmorRescale = true; }
+                                    }
+                                    if (slot.ToString()!.Contains("Hands"))
+                                    {
+                                        if (armo.ArmorRating >= 27) { hasnoArmorRescale = true; }
+                                    }
+                                    if (slot.ToString()!.Contains("Shield"))
+                                    {
+                                        if (armo.ArmorRating >= 54) { hasnoArmorRescale = true; }
+                                    }
+                                }
+                                if (armorType.ToString() == "LightArmor")
+                                {
+                                    if (slot.ToString()!.Contains("Body"))
+                                    {
+                                        if (armo.ArmorRating >= 62) { hasnoArmorRescale = true; }
+                                    }
+                                    if (slot.ToString()!.Contains("Head"))
+                                    {
+                                        if (armo.ArmorRating >= 26) { hasnoArmorRescale = true; }
+                                    }
+                                    if (slot.ToString()!.Contains("Feet"))
+                                    {
+                                        if (armo.ArmorRating >= 18) { hasnoArmorRescale = true; }
+                                    }
+                                    if (slot.ToString()!.Contains("Hands"))
+                                    {
+                                        if (armo.ArmorRating >= 18) { hasnoArmorRescale = true; }
+                                    }
+                                    if (slot.ToString()!.Contains("Shield"))
+                                    {
+                                        if (armo.ArmorRating >= 44) { hasnoArmorRescale = true; }
+                                    }
+                                }
                                 if (hasnoArmorRescale == false)
                                 {
                                     modifiedArmo.ArmorRating = modifiedArmo.ArmorRating * factor + offset;
