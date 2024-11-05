@@ -160,7 +160,7 @@ public class Program
             Flags = ScriptProperty.Flag.Edited
         });
 
-        var mod = state.LoadOrder.TryGetValue("Requiem for the Indifferent.esp");
+        
         //Console.WriteLine(mod);
        
         List<string> masterList = new List<string>();
@@ -214,23 +214,28 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
             // Initialize an empty file to avoid null issues later
             WriteToIniFile(outputPath, "");
         }
-
-        // Check if masters are null before accessing them
-        var masters = mod?.Mod?.ModHeader.MasterReferences;
-
-
         // Initialize RFTImasterList as an empty list
         var RFTImasterList = new List<string>();
-
-        // Use a for loop to add each master's ToString() result to RFTImasterList
-        if (masters != null)
+        try
         {
-            for (int i = 0; i < masters.Count; i++)
+            var mod = state.LoadOrder.TryGetValue("Requiem for the Indifferent.esp");
+            // Check if masters are null before accessing them
+            var masters = mod?.Mod?.ModHeader.MasterReferences;
+            // Use a for loop to add each master's ToString() result to RFTImasterList
+            if (masters != null)
             {
-              
-                RFTImasterList.Add(masters[i]?.Master.FileName.ToString() ?? string.Empty);
+                for (int i = 0; i < masters.Count; i++)
+                {
+
+                    RFTImasterList.Add(masters[i]?.Master.FileName.ToString() ?? string.Empty);
+                }
             }
         }
+        catch
+        {
+
+        }
+        
       
 
         // If formSettings.Value.txtOn is true, assign ignoreList to RFTImasterList
