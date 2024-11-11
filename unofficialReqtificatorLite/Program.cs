@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -26,8 +25,6 @@ using ScriptProperty = Mutagen.Bethesda.Skyrim.ScriptProperty;
 using VirtualMachineAdapter = Mutagen.Bethesda.Skyrim.VirtualMachineAdapter;
 using IQuest = Mutagen.Bethesda.Skyrim.IQuest;
 using System.Collections;
-using DynamicData;
-using Newtonsoft.Json;
 
 
 // Function to initialize the matches dictionary with all keys set to 0
@@ -56,35 +53,6 @@ public class Program
             // Write nothing to the file (effectively clearing its content)
         }
     }
-    static DataTable CreateDataTableFromCsv(string filePath)
-    {
-        DataTable dataTable = new DataTable();
-
-        // Read all lines from the CSV file
-        string[] lines = File.ReadAllLines(filePath);
-
-        if (lines.Length > 0)
-        {
-            // Determine the number of columns based on the first line
-            string[] firstLineValues = lines[0].Split(',');
-
-            // Add generic column names (Column1, Column2, etc.)
-            for (int col = 0; col < firstLineValues.Length; col++)
-            {
-                dataTable.Columns.Add("Column" + (col + 1));
-            }
-
-            // Add all rows starting from the first line
-            foreach (string line in lines)
-            {
-                string[] values = line.Split(',');
-                dataTable.Rows.Add(values);
-            }
-        }
-
-        return dataTable;
-    }
-
 
     public static Task<int> Main(string[] args)
     {
@@ -119,23 +87,43 @@ public class Program
 
             }
         }
+          
 
-    
-        bool fozar = state.LoadOrder.PriorityOrder.Reverse().ModExists("Fozars_Dragonborn_ - _Requiem_Patch.esp");
-        bool MagicRedone = state.LoadOrder.PriorityOrder.Reverse().ModExists("Requiem - Magic Redone.esp");
-        bool WeapRedone = state.LoadOrder.PriorityOrder.Reverse().ModExists("Requiem - Weapons and Armor Redone.esp");
-
+        
         FormKey formkeyActor = FormKey.Factory("000800:RFTI_Alternative_Keyword.esp");
         FormKey formkeyArmo = FormKey.Factory("000801:RFTI_Alternative_Keyword.esp");
         FormKey  formkeyWeap = FormKey.Factory("000802:RFTI_Alternative_Keyword.esp");
-        FormKey formKeyPatched = FormKey.Factory("000803:RFTI_Alternative_Keyword.esp");
-        FormKey noDamgeRescale = FormKey.Factory("AD3B2D:Requiem.esp");
-        FormKey noArmorRescale = FormKey.Factory("AD3B2B:Requiem.esp");
-        FormKey noWeaponReach = FormKey.Factory("AD3B2E:Requiem.esp");
-        FormKey NoBowSpeedRescale = FormKey.Factory("AD3B2F:Requiem.esp");
+        FormKey formKeyPatched = FormKey.Factory("000802:RFTI_Alternative_Keyword.esp");
+   
 
-      
 
+        bool formKeyUptoDate = false;
+        try
+        {
+             
+            formKeyUptoDate = true;
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("RFTI_Alternative_Keyword.esp IS NOT UP TO DATE.");
+            Console.WriteLine("Please download update from nexus page.");
+        }
+
+        var newKeyGetter = Skyrim.Keyword.ActorTypeNPC.Resolve(state.LinkCache);
+
+        if (formKeyUptoDate == false)
+        {
+            var newKey = state.PatchMod.Keywords.DuplicateInAsNewRecord(newKeyGetter);
+            newKey.EditorID = "patched_RFTIAlternative";
+            formKeyPatched = newKey.FormKey;
+        }
+       
+
+        foreach (var keyy in state.LoadOrder.PriorityOrder.Keyword().WinningOverrides()){
+
+        }
+        
 
         //public readonly Mutagen.Bethesda.Skyrim.ScriptEntry _lockPickingScript;
         var lockPickingControScript = new Mutagen.Bethesda.Skyrim.ScriptEntry
@@ -160,7 +148,7 @@ public class Program
             Flags = ScriptProperty.Flag.Edited
         });
 
-        
+        var mod = state.LoadOrder.TryGetValue("Requiem for the Indifferent.esp");
         //Console.WriteLine(mod);
        
         List<string> masterList = new List<string>();
@@ -169,39 +157,6 @@ public class Program
 
         // Define the path to the file
         string outputPath = $@"{state.DataFolderPath}\ReqLite_IgnoreThesePlugins.txt";
-
-        string reqPerksAll = $@"{state.DataFolderPath}\RFTIL_perks_all.txt";
- if (!File.Exists(reqPerksAll))
- {
-     Console.WriteLine("ERROR ERROR ERROR ERROR");
-     Console.WriteLine("ERROR ERROR ERROR ERROR");
-     Console.WriteLine("ERROR ERROR ERROR ERROR");
-     Console.WriteLine("Necessary .txt files not found. Please go to the nexus page and download and install the newest Version.");
-Console.WriteLine("Necessary .txt files not found. Please go to the nexus page and download and install the newest Version.");
-Console.WriteLine("Necessary .txt files not found. Please go to the nexus page and download and install the newest Version.");
- }
-
-        string reqSpellsAll = $@"{state.DataFolderPath}\RFTIL_spells_all.txt";
-        string reqSpellsRaces = $@"{state.DataFolderPath}\RFTIL_spells_races.txt";
-        string reqSpellsRaces_Fozar = $@"{state.DataFolderPath}\RFTIL_spells_races_fozar.txt";
-        string reqPerksRaces = $@"{state.DataFolderPath}\RFTIL_perks_races.txt";
-        string reqPerksRaces_Fozar = $@"{state.DataFolderPath}\RFTIL_perks_races_fozar.txt";
-        string reqPerksAll_MR = $@"{state.DataFolderPath}\RFTIL_perks_all_magic_redone.txt";
-        string reqKeysArmor = $@"{state.DataFolderPath}\RFTIL_armor_keywords.txt";
-        string reqKeysArmorBody = $@"{state.DataFolderPath}\RFTIL_armor_keywords_body.txt";
-        string reqKeysWeapons = $@"{state.DataFolderPath}\RFTIL_weapon_keywords.txt";
-
-        DataTable DB_reqPerksAll = CreateDataTableFromCsv(reqPerksAll);
-        DataTable DB_reqSpellsAll = CreateDataTableFromCsv(reqSpellsAll);
-        DataTable DB_reqSpellsRaces = CreateDataTableFromCsv(reqSpellsRaces);
-        DataTable DB_reqSpellsRaces_Fozar = CreateDataTableFromCsv(reqSpellsRaces_Fozar);
-        DataTable DB_reqPerksAll_MR = CreateDataTableFromCsv(reqPerksAll_MR);
-        DataTable DB_reqKeysArmor = CreateDataTableFromCsv(reqKeysArmor);
-        DataTable DB_reqKeysArmorBody = CreateDataTableFromCsv(reqKeysArmorBody);
-        DataTable DB_reqKeysWeapons = CreateDataTableFromCsv(reqKeysWeapons);
-        DataTable DB_reqPerksRaces = CreateDataTableFromCsv(reqPerksRaces);
-        DataTable DB_reqPerksRaces_Fozar = CreateDataTableFromCsv(reqPerksRaces_Fozar);
-
 
         // Check if the file exists and read it into ignoreList, else create it
         if (File.Exists(outputPath))
@@ -214,28 +169,23 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
             // Initialize an empty file to avoid null issues later
             WriteToIniFile(outputPath, "");
         }
+
+        // Check if masters are null before accessing them
+        var masters = mod?.Mod?.ModHeader.MasterReferences;
+
+
         // Initialize RFTImasterList as an empty list
         var RFTImasterList = new List<string>();
-        try
-        {
-            var mod = state.LoadOrder.TryGetValue("Requiem for the Indifferent.esp");
-            // Check if masters are null before accessing them
-            var masters = mod?.Mod?.ModHeader.MasterReferences;
-            // Use a for loop to add each master's ToString() result to RFTImasterList
-            if (masters != null)
-            {
-                for (int i = 0; i < masters.Count; i++)
-                {
 
-                    RFTImasterList.Add(masters[i]?.Master.FileName.ToString() ?? string.Empty);
-                }
+        // Use a for loop to add each master's ToString() result to RFTImasterList
+        if (masters != null)
+        {
+            for (int i = 0; i < masters.Count; i++)
+            {
+              
+                RFTImasterList.Add(masters[i]?.Master.FileName.ToString() ?? string.Empty);
             }
         }
-        catch
-        {
-
-        }
-        
       
 
         // If formSettings.Value.txtOn is true, assign ignoreList to RFTImasterList
@@ -343,144 +293,13 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                 }
                 var modifiedNpc = state.PatchMod.Npcs.GetOrAddAsOverride(npc);
                     modifiedNpc.Keywords ??= new();
-                if (formSettings.Value.spidOn == false)
-                {
                     modifiedNpc.Keywords.Add(formkeyActor);
-                }
-                    
                     modifiedNpc.Keywords.Add(formKeyPatched);
-                modifiedNpc.Perks ??= new();
-                if (formSettings.Value.spidOn == true)
-                {
-                    for (int i = 0; i < DB_reqPerksAll?.Rows.Count; i++)
-                    {
-                        //  Console.WriteLine((string)DB_reqPerksAll.Rows[i][0]);
-
-                        FormLink<IPerkGetter> perkToAdd = FormKey.Factory((string)DB_reqPerksAll.Rows[i][0]);
-                        modifiedNpc.Perks.Add(new PerkPlacement()
-                        {
-                            Perk = perkToAdd,
-                            Rank = 1
-                        });
-
-                    }
-                    modifiedNpc.ActorEffect ??= new();
-                    for (int i = 0; i < DB_reqSpellsAll?.Rows.Count; i++)
-                    {
-
-
-                        FormLink<ISpellGetter> SpellToAdd = FormKey.Factory((string)DB_reqSpellsAll.Rows[i][0]);
-                        modifiedNpc.ActorEffect.Add(SpellToAdd);
-                    }
-                    FormLink<IRaceGetter> raceGetter = modifiedNpc.Race.FormKey;
-                    var npcRace = raceGetter.Resolve(state.LinkCache);
-                    var raceOrigin = npcRace.FormKey.ModKey.ToString();
-                    
-                    if (raceOrigin == "Skyrim.esm" || raceOrigin == "Dawnguard.esm" || raceOrigin == "Dragonborn.esm")
-                    {
-
-                        for (int i = 0; i < DB_reqSpellsRaces?.Rows.Count; i++)
-                        {
-
-                            if (npcRace.EditorID!.ToString() == (string)DB_reqSpellsRaces.Rows[i][1])
-                            {
-                                modifiedNpc.ActorEffect ??= new();
-                                FormLink<ISpellGetter> SpellToAdd = FormKey.Factory((string)DB_reqSpellsRaces.Rows[i][0]);
-                                modifiedNpc.ActorEffect.Add(SpellToAdd);
-
-                            }
-
-                        }
-                        for (int i = 0; i < DB_reqPerksRaces?.Rows.Count; i++)
-                        {
-
-
-
-                            if (npcRace.EditorID!.ToString() == (string)DB_reqPerksRaces.Rows[i][1])
-                            {
-                                FormLink<IPerkGetter> perkToAdd = FormKey.Factory((string)DB_reqPerksRaces.Rows[i][0]);
-                                modifiedNpc.Perks.Add(new PerkPlacement()
-                                {
-                                    Perk = perkToAdd,
-                                    Rank = 1
-                                });
-                            }
-                 
-
-                        }
-
-                        if (fozar == true)
-                    {
-                        for (int i = 0; i < DB_reqSpellsRaces_Fozar?.Rows.Count; i++)
-                        {
-                            if (npcRace.EditorID!.ToString() == (string)DB_reqSpellsRaces_Fozar.Rows[i][1])
-                            {
-                                modifiedNpc.ActorEffect ??= new();
-                                FormLink<ISpellGetter> SpellToAdd = FormKey.Factory((string)DB_reqSpellsRaces_Fozar.Rows[i][0]);
-                                modifiedNpc.ActorEffect.Add(SpellToAdd);
-
-                            }
-
-                        }
-                            for (int i = 0; i < DB_reqPerksRaces_Fozar?.Rows.Count; i++)
-                            {
-
-
-                                
-                                if (npcRace.EditorID!.ToString() == (string)DB_reqPerksRaces_Fozar.Rows[i][1])
-                                {
-                                    FormLink<IPerkGetter> perkToAdd = FormKey.Factory((string)DB_reqPerksRaces_Fozar.Rows[i][0]);
-                                    modifiedNpc.Perks.Add(new PerkPlacement()
-                                    {
-                                        Perk = perkToAdd,
-                                        Rank = 1
-                                    });
-                                }
-
-
-                            }
-
-                        }
-                }
-                    if (MagicRedone == true)
-                    {
-                        for (int i = 0; i < DB_reqPerksAll_MR?.Rows.Count; i++)
-                        {
-                            modifiedNpc.Perks ??= new();
-                            FormLink<IPerkGetter> perkToAdd = FormKey.Factory((string)DB_reqPerksAll_MR.Rows[i][0]);
-                            modifiedNpc.Perks.Add(new PerkPlacement()
-                            {
-                                Perk = perkToAdd,
-                                Rank = 1
-                            });
-
-                        }
-                    }
-                    if (WeapRedone == true) {
-                        modifiedNpc.Perks ??= new();
-                        FormLink<IPerkGetter> perkToAdd = FormKey.Factory("000853:Requiem - Weapons and Armor Redone.esp");
-                        FormLink<IPerkGetter> perkToAddsec = FormKey.Factory("0008E9:Requiem - Weapons and Armor Redone.esp");
-                        modifiedNpc.Perks.Add(new PerkPlacement()
-                        {
-                            Perk = perkToAdd,
-                            Rank = 1
-                        });
-                        modifiedNpc.Perks.Add(new PerkPlacement()
-                        {
-                            Perk = perkToAddsec,
-                            Rank = 1
-                        });
-                    }
-
-
-                }
-
+            }
+               
+                
 
             }
-
-
-
-        }
             if (formSettings.Value.WeaponsOn)
             {
                 foreach (var weap in state.LoadOrder.PriorityOrder.Weapon().WinningOverrides())
@@ -596,33 +415,18 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                 }
                 var modifiedWeap = state.PatchMod.Weapons.GetOrAddAsOverride(weap);
                         modifiedWeap.Keywords ??= new();
-
-                if (formSettings.Value.spidOn == false)
-                {
-                    modifiedWeap.Keywords.Add(formkeyWeap);
-                }
+                        modifiedWeap.Keywords.Add(formkeyWeap);
                         modifiedWeap.Keywords.Add(formKeyPatched);
                 try
                         {
-                    bool hasNoRescale = modifiedWeap.Keywords?.Any(s => s.FormKey == noDamgeRescale) ?? false;
-                    if (hasNoRescale == false)
-                    {
-                        modifiedWeap.BasicStats!.Damage = (ushort)(modifiedWeap.BasicStats!.Damage * factor!);
-                    }
-
-                   
+                            modifiedWeap.BasicStats!.Damage = (ushort)(modifiedWeap.BasicStats!.Damage * factor!);
                         }
                         catch { }
                         try
                         {
                             if (isBow == false)
                             {
-                        bool hasNoWeaponReach = modifiedWeap.Keywords?.Any(s => s.FormKey == noWeaponReach) ?? false;
-                        if (hasNoWeaponReach == false)
-                        {
-                            modifiedWeap.Data!.Reach *= 0.7f;
-                        }
-                           
+                                modifiedWeap.Data!.Reach *= 0.7f;
                             }
 
 
@@ -635,49 +439,30 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                         catch { }
                         try
                         {
-                    bool hasNoBowSpeedRescale = modifiedWeap.Keywords?.Any(s => s.FormKey == NoBowSpeedRescale) ?? false;
-
-                    if(hasNoBowSpeedRescale == false)
-                    {
-                        if (isBow == true)
-                        {
-                            if (isXBow == false)
+                            if (isBow == true)
                             {
-                                modifiedWeap.Data!.Speed = 0.3704f;
+                                if (isXBow == false)
+                                {
+                                    modifiedWeap.Data!.Speed = 0.3704f;
+                                }
+                            }
+                            if (isXBow == true)
+                            {
+                                modifiedWeap.Data!.Speed = 0.4445f;
+
+
                             }
                         }
-                        if (isXBow == true)
-                        {
-                            modifiedWeap.Data!.Speed = 0.4445f;
-
-
-                        }
-                    }
-                           
-                        }
                         catch { }
-
-
-
-                if (formSettings.Value.spidOn == true)
-                {
-                    for (int i = 0; i < DB_reqKeysWeapons?.Rows.Count; i++)
-                    {
-                        bool loopHasKeyword = modifiedWeap.Keywords?.Any(s => s.FormKey == FormKey.Factory((string)DB_reqKeysWeapons.Rows[i][1])) ?? false;
-                        if (loopHasKeyword)
-                        {
-                            modifiedWeap.Keywords ??= new();
-                            modifiedWeap.Keywords.Add(FormKey.Factory((string)DB_reqKeysWeapons.Rows[i][0]));
-
-                        }
-                    }
-                }
+                    
                    
 
 
 
-                // .BasicStats?.Damage = (ushort)(r.BasicStats.Damage * factor)
-            }
+
+
+                    // .BasicStats?.Damage = (ushort)(r.BasicStats.Damage * factor)
+                }
             }
             if (formSettings.Value.ArrowsOn)
             {
@@ -690,7 +475,6 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                 
                 bool hasBeenPatched = false;
                 
-
                 if ( masterList.Count > formSettings.Value.maxNumP && stopBeforeLimit == false)
                 {
                     stopBeforeLimit = true;
@@ -713,15 +497,6 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                 {
                     continue;
                 }
-
-               
-               bool hasNoRescale = ammoo.Keywords?.Any(s => s.FormKey == noDamgeRescale) ?? false;
-                if (hasNoRescale == true)
-                {
-                    continue;
-                }
-
-
                 if (autoPatchEnabled)
                     {npcFromSelectedMod = 1;
 
@@ -854,7 +629,6 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                 }
                 float offset = 18.0f;
                         float factor = 3.3f;
-                bool hasnoArmorRescale = false;
                         try
                         {
                             var armorType = armo.BodyTemplate?.ArmorType;
@@ -865,15 +639,14 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                             {
                                 offset = 66.0f;
                             }
-                    if (armorType.ToString() == "HeavyArmor")
-                    {
-                        factor = 6.6f;
-                    }
-                       
+                            if (armorType.ToString() == "HeavyArmor")
+                            {
+                                factor = 6.6f;
+                            }
 
                             if (armorType.ToString() == "HeavyArmor" || armorType.ToString() == "LightArmor")
                             {
-                                if (slot.ToString()!.Contains("Body") || slot.ToString()!.Contains("Head") || slot.ToString()!.Contains("Feet") || slot.ToString()!.Contains("Hands") || slot.ToString()!.Contains("Shield"))
+                                if (slot.ToString()!.Contains("Body") || slot.ToString()!.Contains("Head") || slot.ToString()!.Contains("Feet") || slot.ToString()!.Contains("Hands"))
                                 {
                             if (!masterList.Contains(modKey.ToString()))
                             {
@@ -882,102 +655,12 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                             var modifiedArmo = state.PatchMod.Armors.GetOrAddAsOverride(armo);
 
                                     modifiedArmo.Keywords ??= new();
-                            if (formSettings.Value.spidOn == false)
-                            {
-                                modifiedArmo.Keywords.Add(formkeyArmo);
-                            }
+                                    modifiedArmo.Keywords.Add(formkeyArmo);
                                     modifiedArmo.Keywords.Add(formKeyPatched);
-                          if(modifiedArmo.ArmorRating > 0)
-                            {
-
-                                 hasnoArmorRescale = modifiedArmo.Keywords?.Any(s => s.FormKey == noArmorRescale) ?? false;
-                                if (armorType.ToString() == "HeavyArmor")
-                                {
-
-                                    if (slot.ToString()!.Contains("Body"))
-                                    {
-                                        if (armo.ArmorRating >= 74) { hasnoArmorRescale = true; }
-                                    }
-                                    if (slot.ToString()!.Contains("Head"))
-                                    {
-                                        if (armo.ArmorRating >= 35) { hasnoArmorRescale = true; }
-                                    }
-                                    if (slot.ToString()!.Contains("Feet"))
-                                    {
-                                        if (armo.ArmorRating >= 27) { hasnoArmorRescale = true; }
-                                    }
-                                    if (slot.ToString()!.Contains("Hands"))
-                                    {
-                                        if (armo.ArmorRating >= 27) { hasnoArmorRescale = true; }
-                                    }
-                                    if (slot.ToString()!.Contains("Shield"))
-                                    {
-                                        if (armo.ArmorRating >= 54) { hasnoArmorRescale = true; }
-                                    }
-                                }
-                                if (armorType.ToString() == "LightArmor")
-                                {
-                                    if (slot.ToString()!.Contains("Body"))
-                                    {
-                                        if (armo.ArmorRating >= 62) { hasnoArmorRescale = true; }
-                                    }
-                                    if (slot.ToString()!.Contains("Head"))
-                                    {
-                                        if (armo.ArmorRating >= 26) { hasnoArmorRescale = true; }
-                                    }
-                                    if (slot.ToString()!.Contains("Feet"))
-                                    {
-                                        if (armo.ArmorRating >= 18) { hasnoArmorRescale = true; }
-                                    }
-                                    if (slot.ToString()!.Contains("Hands"))
-                                    {
-                                        if (armo.ArmorRating >= 18) { hasnoArmorRescale = true; }
-                                    }
-                                    if (slot.ToString()!.Contains("Shield"))
-                                    {
-                                        if (armo.ArmorRating >= 44) { hasnoArmorRescale = true; }
-                                    }
-                                }
-                                if (hasnoArmorRescale == false)
-                                {
                                     modifiedArmo.ArmorRating = modifiedArmo.ArmorRating * factor + offset;
                                 }
-                                
+
                             }
-                                  
-                            if (formSettings.Value.spidOn == true)
-                            {
-                                for (int i = 0; i < DB_reqKeysArmor?.Rows.Count; i++)
-                                {
-                                    bool loopHasKeyword = modifiedArmo.Keywords?.Any(s => s.FormKey == FormKey.Factory((string)DB_reqKeysArmor.Rows[i][1])) ?? false;
-                                    if (loopHasKeyword)
-                                    {
-                                        modifiedArmo.Keywords ??= new();
-                                        modifiedArmo.Keywords.Add(FormKey.Factory((string)DB_reqKeysArmor.Rows[i][0]));
-
-                                    }
-                                }
-                                bool isBodyArm = modifiedArmo.Keywords?.Any(s => s.FormKey == FormKey.Factory((string)DB_reqKeysArmorBody!.Rows[0][2])) ?? false;
-                                if (isBodyArm)
-                                {
-                                    for (int i = 0; i < DB_reqKeysArmorBody?.Rows.Count; i++)
-                                    {
-                                        bool loopHasKeyword = modifiedArmo.Keywords?.Any(s => s.FormKey == FormKey.Factory((string)DB_reqKeysArmorBody.Rows[i][1])) ?? false;
-                                        if (loopHasKeyword)
-                                        {
-                                            modifiedArmo.Keywords ??= new();
-                                            modifiedArmo.Keywords.Add(FormKey.Factory((string)DB_reqKeysArmorBody.Rows[i][0]));
-
-                                        }
-                                    }
-                                }
-                            }
-                                     
-
-
-                        }
-
-                    }
                         }
                         catch { }
                     
