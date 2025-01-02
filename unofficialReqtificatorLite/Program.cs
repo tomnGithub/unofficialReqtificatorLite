@@ -548,6 +548,8 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                 {
                     continue;
                 }
+				try
+				{
                 float? factor = weap.Data!.AnimationType switch
                         {
                             WeaponAnimationType.Bow => 4,
@@ -589,7 +591,10 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                             WeaponAnimationType.TwoHandAxe => false,
                             _ => null
                         };
-
+				}
+				catch{
+					continue;
+				}
                 if (!masterList.Contains(modKey.ToString()))
                 {
                     masterList.Add(modKey.ToString());
