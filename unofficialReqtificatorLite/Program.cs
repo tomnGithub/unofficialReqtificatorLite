@@ -548,9 +548,12 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                 {
                     continue;
                 }
-				try
+                float? factor = 1;
+                bool? isBow = false;
+                bool? isXBow = false;
+                try
 				{
-                float? factor = weap.Data!.AnimationType switch
+                factor = weap.Data!.AnimationType switch
                         {
                             WeaponAnimationType.Bow => 4,
                             WeaponAnimationType.Crossbow => 4,
@@ -565,7 +568,7 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                         };
 
 
-                        bool? isBow = weap.Data!.AnimationType switch
+                       isBow = weap.Data!.AnimationType switch
                         {
                             WeaponAnimationType.Bow => true,
                             WeaponAnimationType.Crossbow => true,
@@ -578,7 +581,7 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                             WeaponAnimationType.TwoHandAxe => false,
                             _ => null
                         };
-                        bool? isXBow = weap.Data!.AnimationType switch
+                    isXBow = weap.Data!.AnimationType switch
                         {
                             WeaponAnimationType.Bow => false,
                             WeaponAnimationType.Crossbow => true,
