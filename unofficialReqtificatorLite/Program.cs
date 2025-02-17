@@ -881,7 +881,7 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
 
                             if (armorType.ToString() == "HeavyArmor" || armorType.ToString() == "LightArmor")
                             {
-                                if (slot.ToString()!.Contains("Body") || slot.ToString()!.Contains("Head") || slot.ToString()!.Contains("Feet") || slot.ToString()!.Contains("Hands") || slot.ToString()!.Contains("Shield"))
+                                if (slot.ToString()!.Contains("Ears") || slot.ToString()!.Contains("Hair") || slot.ToString()!.Contains("Circlet") || slot.ToString()!.Contains("Body") || slot.ToString()!.Contains("Head") || slot.ToString()!.Contains("Feet") || slot.ToString()!.Contains("Hands") || slot.ToString()!.Contains("Shield") )
                                 {
                             if (!masterList.Contains(modKey.ToString()))
                             {
@@ -910,6 +910,22 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                                     {
                                         if (armo.ArmorRating >= 35) { hasnoArmorRescale = true; }
                                     }
+                                    if (slot.ToString()!.Contains("Circlet"))
+                                    {
+                                        if (armo.ArmorRating >= 35) { hasnoArmorRescale = true; }
+                                    }
+                                    if (slot.ToString()!.Contains("Hair"))
+                                    {
+                                        if (armo.ArmorRating >= 35) { hasnoArmorRescale = true; }
+                                    }
+                                    if (slot.ToString()!.Contains("Long Hair"))
+                                    {
+                                        if (armo.ArmorRating >= 35) { hasnoArmorRescale = true; }
+                                    }
+                                    if (slot.ToString()!.Contains("Ears"))
+                                    {
+                                        if (armo.ArmorRating >= 35) { hasnoArmorRescale = true; }
+                                    }
                                     if (slot.ToString()!.Contains("Feet"))
                                     {
                                         if (armo.ArmorRating >= 27) { hasnoArmorRescale = true; }
@@ -930,6 +946,22 @@ Console.WriteLine("Necessary .txt files not found. Please go to the nexus page a
                                         if (armo.ArmorRating >= 62) { hasnoArmorRescale = true; }
                                     }
                                     if (slot.ToString()!.Contains("Head"))
+                                    {
+                                        if (armo.ArmorRating >= 26) { hasnoArmorRescale = true; }
+                                    }
+                                    if (slot.ToString()!.Contains("Circlet"))
+                                    {
+                                        if (armo.ArmorRating >= 26) { hasnoArmorRescale = true; }
+                                    }
+                                    if (slot.ToString()!.Contains("Hair"))
+                                    {
+                                        if (armo.ArmorRating >= 26) { hasnoArmorRescale = true; }
+                                    }
+                                    if (slot.ToString()!.Contains("Long Hair"))
+                                    {
+                                        if (armo.ArmorRating >= 26) { hasnoArmorRescale = true; }
+                                    }
+                                    if (slot.ToString()!.Contains("Ears"))
                                     {
                                         if (armo.ArmorRating >= 26) { hasnoArmorRescale = true; }
                                     }
